@@ -1,21 +1,34 @@
-# 0001. Record architecture decisions
+# 0001 Record architecture decisions
 
-- Status: accepted
-- Date: 2026
+## Status
+
+Accepted.
 
 ## Context
 
-Decisions about this utility's design, dependencies and public API need to be understandable later, by people
-and by coding agents that have no access to the original conversation.
+The repository needs a durable record of the choices that shape the code, so that contributors and coding
+agents do not undo them by accident. Several decisions are load-bearing and easy to "improve" wrongly: the
+absence of a DOM parser, the absence of a Public Suffix List, and the gating rule.
 
 ## Decision
 
-We record every significant decision as a numbered Markdown file in `docs/decisions/`, named
-`NNNN-short-title.md`, with the sections Context, Decision and Consequences. Records are immutable once
-accepted; a later record supersedes an earlier one and links to it.
+Architecture decisions are recorded as numbered Markdown files in `docs/decisions/`, named
+`NNNN-title.md`, starting at `0001`. Each record states its status, context, decision and consequences.
+Superseding a record writes a new one that links back instead of editing history.
+
+The first decisions captured this way:
+
+1. A bounded, linear, tolerant tokenizer replaces a DOM parser: no dependency, predictable cost on hostile
+   input, and enough fidelity for the elements and attributes that matter.
+2. The first-party test is a documented host-suffix approximation without the Public Suffix List; the
+   approximation is called out in [ARCHITECTURE.md](../ARCHITECTURE.md).
+3. Gating follows the `type` attribute for external and inline scripts alike, because consent managers use
+   `type="text/plain"` for both forms.
 
 ## Consequences
 
-- The reasoning behind the code is versioned next to it.
-- The documentation check requires at least one record in `docs/decisions/`.
-- Changing a past decision requires a new record instead of rewriting history.
+- New architectural decisions require a new record and a changelog entry.
+- Behaviour changes to the tokenizer, the matcher or the gating rule must reference the relevant record in
+  their pull request.
+- Documentation stays consistent with the code: a record that no longer matches the code is superseded, never
+  silently edited.

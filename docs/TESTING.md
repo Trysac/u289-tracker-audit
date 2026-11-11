@@ -1,37 +1,27 @@
 # Testing
 
-## Tools
-
-- [Vitest](https://vitest.dev/) runs the suites in `test/`.
-- Coverage is collected with V8 (`@vitest/coverage-v8`) over `src/`.
-
 ## Commands
 
-```sh
-npm test            # vitest run --coverage
-npx vitest          # watch mode while developing
-npm run check       # every gate, including tests
-```
+Both test files are authored for Vitest and import `describe`, `expect`, `it` and, in `test/cli.test.ts`, `vi`. They are executed by the repository's Vitest configuration; no test command is defined inside the test files.
 
-## Rules
+## Layout
 
-- Coverage must stay at or above 80 % for lines, branches, functions and statements (`vitest.config.ts`).
-  Lowering the thresholds is not allowed.
-- Test through the public entry point (`src/index.ts`) and assert observable behavior: return values,
-  thrown errors and their messages.
-- Each bug fix adds a test that fails without the fix.
-- Tests are deterministic: no network, no real clock or randomness without injection, no shared state between
-  tests. Temporary files go to the OS temp directory and are removed by the test.
+| Path | Contents |
+|---|---|
+| `test/index.test.ts` | `auditHtml` detection for script, img, iframe, link and inline snippets; URL resolution; host matching and lookalikes; first-party host handling; gating from `type` and `data-src`; custom `TrackerRule` validation; error codes; sorting; malformed input; `renderReport` text and JSON; `DEFAULT_TRACKERS` names and domain format. |
+| `test/cli.test.ts` | `run(argv, io)` with fake `stdout`/`stderr`: exit codes 0, 1 and 2; text and JSON output; missing file; missing `--page-url`; invalid `--format`; unknown options; invalid page URL; temporary HTML files. |
 
-## Tiers
+## What must stay covered
 
-- Local tier (every gate run, coverage measured here): unit and property tests, plus conformance on small
-  fixtures kept in the repository.
-- CI tier: conformance that needs an external tool or a download. Name them `test/<name>.conformance.test.ts`; `vitest.config.ts` excludes them locally
-  (unless `FABRICA_CI=1`). The CI `conformance` job sets `FABRICA_CI=1` and runs the full suite. Tools are installed
-  by the optional `ci/conformance-setup.sh` (bash, CI only; verify every download against a pinned SHA-256), and
-  tagged tests skip cleanly when their tool is missing.
+- Uppercase tags and attributes, unquoted `src`.
+- A protocol-relative `//www.google-analytics.com/analytics.js`.
+- A script end tag split across lines.
+- A malformed tag at the end of input.
+- Host lookalikes (`notgoogle-analytics.com`, `google-analytics.com.evil.example`) that must not match.
+- Comments and plain text containing a signature, which must not produce a finding.
+- Inline snippets behind `type="text/plain"`, reported with `gated: true` and exit code `0`.
+- `input_too_large`, `invalid_options` and `invalid_tracker` errors.
 
-## Reports
+## Adding a test
 
-Coverage reports are written to `coverage/` (text summary and `lcov`). The folder is ignored by git.
+Start with the failing test, state the acceptance criterion it checks and keep it on the public API or the CLI `run` function. A custom `TrackerRule` is the cheapest way to test path prefixes and signatures without depending on `DEFAULT_TRACKERS`.
