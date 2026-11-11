@@ -9,4 +9,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- feat: add tracker-audit library to detect third-party trackers in HTML with consent gating status.
 - Initial project structure from the factory utility template.
