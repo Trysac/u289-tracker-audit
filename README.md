@@ -1,7 +1,6 @@
 # tracker-audit
 
-[![npm version](https://img.shields.io/npm/v/@trysac/tracker-audit.svg)](https://www.npmjs.com/package/@trysac/tracker-audit)
-[![license: MIT](https://img.shields.io/npm/l/@trysac/tracker-audit.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Trysac/u289-tracker-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/Trysac/u289-tracker-audit/actions/workflows/ci.yml)
 
 ## Problem
@@ -10,9 +9,15 @@ Sites embed analytics, advertising and session-replay scripts that load before a
 
 ## Install
 
+Not published to npm yet. Build it from a clone, then install it from the local path:
+
 ```sh
-npm install @trysac/tracker-audit
+git clone https://github.com/Trysac/u289-tracker-audit.git
+cd u289-tracker-audit && npm ci && npm run build
+cd ../your-project && npm install ../u289-tracker-audit
 ```
+
+Imports keep the package name: `import { ... } from "@trysac/tracker-audit"`.
 
 Requires Node.js 20 or newer. The package is ES modules with TypeScript declarations and has no runtime dependencies.
 
